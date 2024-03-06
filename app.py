@@ -47,9 +47,13 @@ def home():
 @app.route('/convert', methods=['POST'])
 def convert():
     data = request.get_json()
+
     amount = float(data['amount'])
     from_currency = data['from_currency']
     to_currency = data['to_currency']
+
+    if amount <= 0:
+        return jsonify({'conversionResult': 'Amount must be greater than 0'})
 
     # TCMB'nin güncel kurlarını içeren XML dosyasını çek
     response = requests.get('https://www.tcmb.gov.tr/kurlar/today.xml')
@@ -68,7 +72,7 @@ def convert():
     else:
         converted_amount = (amount / float(to_rate.ForexBuying.text)) * float(from_rate.ForexBuying.text)
 
-    result = f'{amount} {from_currency} is equal to {converted_amount:.2f} {to_currency}'
+    result = f'{amount} {from_currency} = {converted_amount:.2f} {to_currency}'
 
     # JSON olarak sonucu döndür
     return jsonify({'conversionResult': result})
