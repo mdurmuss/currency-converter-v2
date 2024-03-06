@@ -40,10 +40,11 @@
             <div class="col-md-12">
                 <h3 class="text-center mb-4">Döviz Çevirici</h3>
                 <div class="input-group mb-3">
-                    <input type="number" id="amount" class="form-control" placeholder="Miktar" aria-label="Miktar" min="0">
+                    <input type="number" id="amount" class="form-control" placeholder="Miktar" aria-label="Miktar"
+                           min="0">
                     <select class="custom-select" id="from_currency">
                         {% for code, name in currencies %}
-                        <option value="{{ code }}">{{ code }} - {{ name }}</option>
+                            <option value="{{ code }}">{{ code }} - {{ name }}</option>
                         {% endfor %}
                     </select>
                     <div class="input-group-prepend">
@@ -51,11 +52,11 @@
                     </div>
                     <select class="custom-select" id="to_currency">
                         {% for code, name in currencies %}
-                        {% if loop.last%}
-                        <option value="{{ code }}" selected>{{ code }} - {{ name }}</option>
-                        {% else %}
-                        <option value="{{ code }}">{{ code }} - {{ name }}</option>
-                        {% endif %}
+                            {% if loop.last %}
+                                <option value="{{ code }}" selected>{{ code }} - {{ name }}</option>
+                            {% else %}
+                                <option value="{{ code }}">{{ code }} - {{ name }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -81,16 +82,17 @@
         </thead>
         <tbody>
         {% for currency in currency_with_rate %}
-        <tr>
-            <td>{{ currency[1] }}</td>
-            <td>{{ currency[2] }}</td>
-            <td>{{ currency[3] }}</td>
-        </tr>
+            <tr>
+                <td>{{ currency[1] }}</td>
+                <td>{{ currency[2] }}</td>
+                <td>{{ currency[3] }}</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
     <footer class="mt-5">
-        <p style="text-align: center;"><small>Veri Kaynağı: <a href="https://www.tcmb.gov.tr/kurlar/kurlar_tr.html" target="_blank">Türkiye
+        <p style="text-align: center;"><small>Veri Kaynağı: <a href="https://www.tcmb.gov.tr/kurlar/kurlar_tr.html"
+                                                               target="_blank">Türkiye
             Cumhuriyet Merkez Bankası</a></small></p>
     </footer>
 </div>
