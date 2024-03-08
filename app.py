@@ -5,14 +5,14 @@ import datetime
 
 app = Flask(__name__)
 RESPONSE = requests.get('https://www.tcmb.gov.tr/kurlar/today.xml')
+soup = BeautifulSoup(RESPONSE.content, 'xml')
+CURRENCIES = soup.find_all('Currency')
 LAST_UPDATE_DATE = datetime.datetime.strptime(RESPONSE.headers['Last-Modified'],
                                               '%a, %d %b %Y %H:%M:%S %Z') + datetime.timedelta(hours=3)
 
 
 def fetch_currencies():
-    soup = BeautifulSoup(RESPONSE.content, 'xml')
-    currencies = soup.find_all('Currency')
-    currency_list = [(currency.get('Kod'), currency.CurrencyName.text) for currency in currencies if
+    currency_list = [(currency.get('Kod'), currency.CurrencyName.text) for currency in CURRENCIES if
                      currency.get('Kod') and currency.get('Kod') != 'XDR']
 
     currency_list.append(('TRY', 'TÜRK LİRASI'))
@@ -21,22 +21,22 @@ def fetch_currencies():
 
 
 def fetch_currencies_with_rates():
-    soup = BeautifulSoup(RESPONSE.content, 'xml')
-    currencies = soup.find_all('Currency')
-    currency_list = [(currency.get('Kod'),
-                      currency.CurrencyName.text, currency.ForexBuying.text, currency.ForexSelling.text) for currency in
-                     currencies if
-                     currency.get('Kod') and currency.get('Kod') != 'XDR']
+    currency_list = []
+    for currency in CURRENCIES:
+        if currency.get('Kod') and currency.get('Kod') != 'XDR':
+            kod = currency.get('Kod')
+            currency_name = currency.CurrencyName.text
+            forex_buying = currency.ForexBuying.text
+            forex_selling = currency.ForexSelling.text
+            currency_list.append((kod, currency_name, forex_buying, forex_selling))
 
     return currency_list
 
 
-currencies = fetch_currencies()
-currency_with_rate = fetch_currencies_with_rates()
-
-
 @app.route('/')
 def home():
+    currencies = fetch_currencies()
+    currency_with_rate = fetch_currencies_with_rates()
     return render_template('index.html', currencies=currencies,
                            currency_with_rate=currency_with_rate,
                            last_update=LAST_UPDATE_DATE)
