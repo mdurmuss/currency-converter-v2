@@ -21,8 +21,7 @@ def fetch_currencies():
 
 
 def fetch_currencies_with_rates():
-    response = requests.get('https://www.tcmb.gov.tr/kurlar/today.xml')
-    soup = BeautifulSoup(response.content, 'xml')
+    soup = BeautifulSoup(RESPONSE.content, 'xml')
     currencies = soup.find_all('Currency')
     currency_list = [(currency.get('Kod'),
                       currency.CurrencyName.text, currency.ForexBuying.text, currency.ForexSelling.text) for currency in
@@ -32,7 +31,6 @@ def fetch_currencies_with_rates():
     return currency_list
 
 
-# Para birimlerini başlangıçta çek
 currencies = fetch_currencies()
 currency_with_rate = fetch_currencies_with_rates()
 
