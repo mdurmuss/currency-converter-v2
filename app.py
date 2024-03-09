@@ -64,8 +64,14 @@ def convert():
 
     # Dönüştürme işlemi yap
     if from_currency == 'TRY':
+        if to_currency == 'TRY':
+            result = f'{amount} {from_currency} = {amount} {to_currency}'
+            return jsonify({'conversionResult': result})
         converted_amount = amount / float(to_rate.ForexBuying.text)
     elif to_currency == 'TRY':
+        if from_currency == 'TRY':
+            result = f'{amount} {from_currency} = {amount} {to_currency}'
+            return jsonify({'conversionResult': result})
         converted_amount = amount * float(from_rate.ForexBuying.text)
     else:
         converted_amount = (amount / float(to_rate.ForexBuying.text)) * float(from_rate.ForexBuying.text)
