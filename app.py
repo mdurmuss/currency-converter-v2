@@ -12,6 +12,10 @@ LAST_UPDATE_DATE = datetime.datetime.strptime(RESPONSE.headers['Last-Modified'],
 
 
 def fetch_currencies() -> list:
+    """
+    Fetch currency list from TCMB and returns it as a list of tuples.
+    (currency_code, currency_name, forex_buying, forex_selling)
+    """
     currency_list_with_code_and_forex_info = []
     for currency in RAW_CURRENCY_LIST:
         if currency.get('Kod') and currency.get('Kod') != 'XDR':
@@ -26,6 +30,9 @@ def fetch_currencies() -> list:
 
 @app.route('/')
 def home():
+    """
+    Render the index.html template with currency list and last update date.
+    """
     currencies = fetch_currencies()
     return render_template('index.html', currencies=currencies,
                            last_update=LAST_UPDATE_DATE)
@@ -33,6 +40,9 @@ def home():
 
 @app.route('/convert', methods=['POST'])
 def convert():
+    """
+    Convert the given amount from one currency to another.
+    """
     data = request.get_json()
 
     amount = float(data['amount'])
