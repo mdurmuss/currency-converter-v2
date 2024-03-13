@@ -38,7 +38,7 @@
         }
 
         .logo-img {
-            height: 200px; /* Logo boyutunu ayarla */
+            height: 200px;
         }
     </style>
 </head>
@@ -53,23 +53,23 @@
                 <div class="input-group mb-3">
                     <input type="number" id="amount" class="form-control" placeholder="Miktar" aria-label="Miktar"
                            min="0">
-                    <select class="custom-select" id="from_currency">
-                        {% for code, name in currencies %}
-                            <option value="{{ code }}">{{ code }} - {{ name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="from_currency"></label><select class="custom-select" id="from_currency">
+                    {% for code, name, buy, sell in currencies %}
+                        <option value="{{ code }}">{{ code }} - {{ name }}</option>
+                    {% endfor %}
+                </select>
                     <div class="input-group-prepend">
                         <button class="input-group-text" onclick="swapCurrencies()" type="button">↔</button>
                     </div>
-                    <select class="custom-select" id="to_currency">
-                        {% for code, name in currencies %}
-                            {% if loop.last %}
-                                <option value="{{ code }}" selected>{{ code }} - {{ name }}</option>
-                            {% else %}
-                                <option value="{{ code }}">{{ code }} - {{ name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+                    <label for="to_currency"></label><select class="custom-select" id="to_currency">
+                    {% for code, name, buy, sell in currencies %}
+                        {% if loop.last %}
+                            <option value="{{ code }}" selected>{{ code }} - {{ name }}</option>
+                        {% else %}
+                            <option value="{{ code }}">{{ code }} - {{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
                 </div>
                 <div class="result-container">
                     <span id="conversionResult">Karşılığı burada görüntülenecek</span>
@@ -92,12 +92,14 @@
         </tr>
         </thead>
         <tbody>
-        {% for currency in currency_with_rate %}
-            <tr>
-                <td>{{ currency[1] }}</td>
-                <td>{{ currency[2] }}</td>
-                <td>{{ currency[3] }}</td>
-            </tr>
+        {% for currency in currencies %}
+            {% if currency[0] != 'TRY' %}
+                <tr>
+                    <td>{{ currency[1] }}</td>
+                    <td>{{ currency[2] }}</td>
+                    <td>{{ currency[3] }}</td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

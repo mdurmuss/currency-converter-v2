@@ -5,40 +5,29 @@ import datetime
 
 app = Flask(__name__)
 RESPONSE = requests.get('https://www.tcmb.gov.tr/kurlar/today.xml')
-soup = BeautifulSoup(RESPONSE.content, 'xml')
-CURRENCIES = soup.find_all('Currency')
+SOUP = BeautifulSoup(RESPONSE.content, 'xml')
+RAW_CURRENCY_LIST = SOUP.find_all('Currency')
 LAST_UPDATE_DATE = datetime.datetime.strptime(RESPONSE.headers['Last-Modified'],
                                               '%a, %d %b %Y %H:%M:%S %Z') + datetime.timedelta(hours=3)
 
 
-def fetch_currencies():
-    currency_list = [(currency.get('Kod'), currency.CurrencyName.text) for currency in CURRENCIES if
-                     currency.get('Kod') and currency.get('Kod') != 'XDR']
-
-    currency_list.append(('TRY', 'TÜRK LİRASI'))
-
-    return currency_list
-
-
-def fetch_currencies_with_rates():
-    currency_list = []
-    for currency in CURRENCIES:
+def fetch_currencies() -> list:
+    currency_list_with_code_and_forex_info = []
+    for currency in RAW_CURRENCY_LIST:
         if currency.get('Kod') and currency.get('Kod') != 'XDR':
             kod = currency.get('Kod')
             currency_name = currency.CurrencyName.text
             forex_buying = currency.ForexBuying.text
             forex_selling = currency.ForexSelling.text
-            currency_list.append((kod, currency_name, forex_buying, forex_selling))
-
-    return currency_list
+            currency_list_with_code_and_forex_info.append((kod, currency_name, forex_buying, forex_selling))
+    currency_list_with_code_and_forex_info.append(('TRY', 'TÜRK LİRASI', 1, 1))
+    return currency_list_with_code_and_forex_info
 
 
 @app.route('/')
 def home():
     currencies = fetch_currencies()
-    currency_with_rate = fetch_currencies_with_rates()
     return render_template('index.html', currencies=currencies,
-                           currency_with_rate=currency_with_rate,
                            last_update=LAST_UPDATE_DATE)
 
 
@@ -53,14 +42,8 @@ def convert():
     if amount <= 0:
         return jsonify({'conversionResult': 'Amount must be greater than 0'})
 
-    # TCMB'nin güncel kurlarını içeren XML dosyasını çek
-    response = requests.get('https://www.tcmb.gov.tr/kurlar/today.xml')
-    soup = BeautifulSoup(response.content, 'xml')
-
-    # Gerekli döviz kurlarını bul
-
-    from_rate = soup.find('Currency', {'Kod': from_currency})
-    to_rate = soup.find('Currency', {'Kod': to_currency})
+    from_rate = SOUP.find('Currency', {'Kod': from_currency})
+    to_rate = SOUP.find('Currency', {'Kod': to_currency})
 
     # Dönüştürme işlemi yap
     if from_currency == 'TRY':
