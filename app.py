@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Author: Mustafa Durmuş [mustafa-durmuss@outlook.com]
+
 from flask import Flask, jsonify, request, render_template
 import requests
 from bs4 import BeautifulSoup
@@ -55,7 +59,6 @@ def convert():
     from_rate = SOUP.find('Currency', {'Kod': from_currency})
     to_rate = SOUP.find('Currency', {'Kod': to_currency})
 
-    # Dönüştürme işlemi yap
     if from_currency == 'TRY':
         if to_currency == 'TRY':
             result = f'{amount} {from_currency} = {amount} {to_currency}'
@@ -71,7 +74,6 @@ def convert():
 
     result = f'{amount} {from_currency} = {converted_amount:.2f} {to_currency}'
 
-    # JSON olarak sonucu döndür
     return jsonify({'conversionResult': result})
 
 
