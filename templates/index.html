@@ -118,21 +118,19 @@
         $('#from_currency').val(toCurrency);
         $('#to_currency').val(fromCurrency);
 
-        // dönüşüm fonksiyonunu tekrar çağır
         $('#amount').trigger('change');
     }
 
     $(function () {
-        // İnput alanlarındaki değişiklikleri dinle
+        // listen for changes on amount, from_currency and to_currency fields.
         $('#amount, #from_currency, #to_currency').on('input change', function () {
             var amount = $('#amount').val();
             var fromCurrency = $('#from_currency').val();
             var toCurrency = $('#to_currency').val();
 
-            // Eğer miktar geçerliyse, dönüşümü yap
             if (amount && fromCurrency && toCurrency) {
                 $.ajax({
-                    url: '/convert', // Flask uygulamanızdaki dönüşüm endpoint'i
+                    url: '/convert',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
